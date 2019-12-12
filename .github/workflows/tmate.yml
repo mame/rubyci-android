@@ -2,8 +2,7 @@ name: CI
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macOS-10.15
     steps:
     - uses: actions/checkout@v1
-    - run: sudo apt-get update
     - uses: mxschmitt/action-tmate@v1

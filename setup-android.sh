@@ -135,8 +135,6 @@ chmod 600 $ID_RSA_FILE
 
 log "You can login the emulator by: ssh -i $ID_RSA_FILE -p $PORT localhost"
 
-ssh -oStrictHostKeyChecking=no -i $ID_RSA_FILE -p $PORT localhost tail -f /sdcard/setup-chkbuild.log
-
 until adb -s $(cat $SERIAL_FILE) pull /sdcard/setup-chkbuild-done /dev/null &>> $SETUP_LOG; do
   sleep 1
 done
@@ -145,7 +143,7 @@ log "Setup done"
 
 log "Run chkbuild"
 
-ssh -i $ID_RSA_FILE -p $PORT -t localhost "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY termux-chroot ./run-chkbuild"
+ssh -oStrictHostKeyChecking=no -i $ID_RSA_FILE -p $PORT -t localhost "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY termux-chroot ./run-chkbuild"
 
 log "Result"
 

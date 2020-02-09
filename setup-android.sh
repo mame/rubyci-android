@@ -145,11 +145,11 @@ log "Setup done"
 
 log "Run chkbuild"
 
-ssh -i android28-x86/id_rsa -p 30000 -t localhost "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY termux-chroot ./run-chkbuild"
+ssh -i $ID_RSA_FILE -p $PORT -t localhost "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY termux-chroot ./run-chkbuild"
 
 log "Result"
 
-ssh -i android28-x86/id_rsa -p 30000 -t localhost "zcat chkbuild/tmp/public_html/ruby-master/log/*.log.txt.gz"
+ssh -i $ID_RSA_FILE -p $PORT -t localhost "zcat chkbuild/tmp/public_html/ruby-master/log/*.log.txt.gz"
 
 log "Stop the emulator"
 kill $(cat $PID) || true

@@ -141,9 +141,11 @@ done
 
 log "Setup done"
 
+ssh -oStrictHostKeyChecking=no -i $ID_RSA_FILE -p $PORT localhost cat /sdcard/setup-chkbuild.log
+
 log "Run chkbuild"
 
-ssh -oStrictHostKeyChecking=no -i $ID_RSA_FILE -p $PORT -t localhost "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY termux-chroot ./run-chkbuild"
+ssh -i $ID_RSA_FILE -p $PORT -t localhost "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY termux-chroot ./run-chkbuild"
 
 log "Result"
 

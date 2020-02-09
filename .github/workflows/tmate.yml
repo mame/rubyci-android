@@ -1,8 +1,0 @@
-name: CI
-on: [push]
-jobs:
-  build:
-    runs-on: macOS-10.14
-    steps:
-    - uses: actions/checkout@v1
-    - uses: mxschmitt/action-tmate@v1

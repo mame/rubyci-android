@@ -1,0 +1,18 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  build:
+    runs-on: macOS-10.14
+    steps:
+    - uses: actions/checkout@v1
+    - run: zsh setup-android.sh 28 x86 30000
+    - run: ssh -i android28-x86/id_rsa -p 30000 -t localhost "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY termux-chroot ./run-chkbuild"
+      env:
+        AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    - run: ssh -i android28-x86/id_rsa -p 30000 -t localhost "zcat chkbuild/tmp/public_html/ruby-master/log/*.log.txt.gz"

@@ -23,7 +23,7 @@ log "pkg upgrade"
 pkg upgrade -f --force-yes &>> $LOG
 
 log "pkg install"
-pkg install openssh make clang autoconf bison ruby git gdbm gdb libdb proot -y &>> $LOG
+pkg install openssh make clang autoconf bison ruby git gdbm gdb libdb proot curl -y &>> $LOG
 
 log "sshd"
 sshd &>> $LOG
@@ -44,6 +44,7 @@ export LOGDIR=chkbuild/tmp/public_html/ruby-master/log/
 mkdir -p $LOGDIR
 
 for file in current.txt last.html.gz recent.ltsv summary.html summary.txt last.html last.txt recent.html rss summary.ltsv; do
+  log "download $LOGDIR/$file"
   curl -o $LOGDIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file; true
 done
 

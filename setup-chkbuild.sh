@@ -40,12 +40,13 @@ gem install aws-sdk -N &>> $LOG
 log "git clone ruby/chkbuild"
 git clone https://github.com/ruby/chkbuild.git &>> $LOG
 
-export LOGDIR=chkbuild/tmp/public_html/ruby-master/log/
+export LOGDIR=chkbuild/tmp/public_html/ruby-master/log
 mkdir -p $LOGDIR
 
 for file in current.txt last.html.gz recent.ltsv summary.html summary.txt last.html last.txt recent.html rss summary.ltsv; do
   log "download $LOGDIR/$file"
-  curl -o $LOGDIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file; true
+  echo "curl -o $LOGDIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file"
+  curl -o $LOGDIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file || true
 done
 
 echo '#!/usr/bin/env bash' > ~/run-chkbuild

@@ -38,9 +38,9 @@ log "gem install aws-sdk"
 gem install aws-sdk -N &>> $LOG
 
 log "git clone ruby/chkbuild"
-git clone https://github.com/ruby/chkbuild.git &>> $LOG
+git clone https://github.com/ruby/chkbuild.git cb &>> $LOG
 
-export PUBLIC_DIR=chkbuild/tmp/public_html/ruby-master
+export PUBLIC_DIR=cb/tmp/public_html/ruby-master
 mkdir -p $PUBLIC_DIR
 
 for file in current.txt last.html.gz recent.ltsv summary.html summary.txt last.html last.txt recent.html rss summary.ltsv; do
@@ -51,7 +51,7 @@ done
 
 echo '#!/usr/bin/env bash' > ~/run-chkbuild
 echo "set -e" >> ~/run-chkbuild
-echo "cd chkbuild" >> ~/run-chkbuild
+echo "cd cb" >> ~/run-chkbuild
 echo "git pull" >> ~/run-chkbuild
 echo "export RUBYCI_NICKNAME=$(getprop ro.rubyci_nickname)" >> ~/run-chkbuild
 echo "./start-rubyci" >> ~/run-chkbuild

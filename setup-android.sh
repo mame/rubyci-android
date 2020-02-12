@@ -57,7 +57,12 @@ log "Create an emulator"
 echo no | avdmanager create avd -f -n $AVD_NAME -k "system-images;android-$ANDROID_API;default;$ABI" -c 100M &>> $SETUP_LOG
 
 log "Invoke the emulator"
-emulator -avd $AVD_NAME -partition-size 4096 -no-audio -no-window -no-snapshot -no-boot-anim -wipe-data -memory 512 -selinux permissive -prop ro.rubyci_nickname=$NICKNAME &> $EMULATOR_LOG &
+if [ "x$GITHUB_ACTIONS" = "x" ]; then
+  ;
+else
+  NO_WINDOW=-no-window
+fi
+emulator -avd $AVD_NAME -partition-size 4096 -no-audio $NO_WINDOW -no-snapshot -no-boot-anim -wipe-data -memory 512 -selinux permissive -prop ro.rubyci_nickname=$NICKNAME &> $EMULATOR_LOG &
 sleep 1
 
 adb wait-for-device
@@ -145,7 +150,7 @@ ssh -oStrictHostKeyChecking=no -i $ID_RSA_FILE -p $PORT localhost cat /sdcard/se
 
 log "Run chkbuild"
 
-ssh -i $ID_RSA_FILE -p $PORT -t localhost "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY termux-chroot ./run-chkbuild"
+ssh -i $ID_RSA_FILE -p $PORT -t localhost "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY ./run-chkbuild"
 
 log "Result"
 

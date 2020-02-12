@@ -133,6 +133,9 @@ sleep 1
 
 log "You can watch the log by: adb -s \$(cat $SERIAL_FILE) shell tail -f /sdcard/setup-chkbuild.log"
 
+adb -s $(cat $SERIAL_FILE) shell tail -f /sdcard/setup-chkbuild.log &
+TAIL_PID=$!
+
 until adb -s $(cat $SERIAL_FILE) pull /sdcard/id_rsa.termux $ID_RSA_FILE &>> $SETUP_LOG; do
   sleep 1
 done
@@ -143,6 +146,8 @@ log "You can login the emulator by: ssh -i $ID_RSA_FILE -p $PORT localhost"
 until adb -s $(cat $SERIAL_FILE) pull /sdcard/setup-chkbuild-done /dev/null &>> $SETUP_LOG; do
   sleep 1
 done
+
+kill -int $TAIL_PID
 
 log "Setup done"
 

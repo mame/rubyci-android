@@ -59,4 +59,5 @@ echo "./start-rubyci" >> ~/run-chkbuild
 chmod 755 ~/run-chkbuild
 
 log "done"
+
 touch /sdcard/setup-chkbuild-done &>> $LOG

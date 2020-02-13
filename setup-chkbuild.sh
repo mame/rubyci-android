@@ -35,7 +35,7 @@ chmod 600 ~/.ssh/authorized_keys &>> $LOG
 cp id_rsa.termux /sdcard/id_rsa.termux &>> $LOG
 
 log "gem install aws-sdk"
-gem install aws-sdk -N &>> $LOG
+gem install aws-sdk-s3 -N &>> $LOG
 
 log "git clone ruby/chkbuild"
 git clone https://github.com/ruby/chkbuild.git cb &>> $LOG
@@ -53,6 +53,7 @@ echo '#!/usr/bin/env bash' > ~/run-chkbuild
 echo "set -e" >> ~/run-chkbuild
 echo "cd cb" >> ~/run-chkbuild
 echo "git pull" >> ~/run-chkbuild
+echo "ulimit -n 1024" >> ~/run-chkbuild
 echo "export RUBYCI_NICKNAME=$(getprop ro.rubyci_nickname)" >> ~/run-chkbuild
 echo "./start-rubyci" >> ~/run-chkbuild
 chmod 755 ~/run-chkbuild

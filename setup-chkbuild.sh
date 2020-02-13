@@ -20,7 +20,7 @@ log "dpkg --configure -a --force-confnew"
 dpkg --configure -a --force-confnew &>> $LOG
 
 log "pkg upgrade"
-pkg upgrade -f --force-yes &>> $LOG
+pkg upgrade -y --force-yes &>> $LOG
 
 log "pkg install"
 pkg install openssh make clang autoconf bison ruby git gdbm gdb libdb proot curl -y &>> $LOG

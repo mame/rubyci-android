@@ -1,7 +1,7 @@
 name: rubyci-android
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '30 * * * *'
 jobs:
   build:
     runs-on: macOS-latest

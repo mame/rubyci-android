@@ -99,7 +99,7 @@ else
   log "Checkout and build Termux"
   git clone https://github.com/termux/termux-app.git
   cd termux-app
-  ./gradlew assembleDebug
+  ./gradlew assembleDebug -Pandroid.useAndroidX=true
   cd ..
 fi
 log "Install and setup Termux"

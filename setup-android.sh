@@ -52,6 +52,7 @@ fi
 log "Make sure emulator images available"
 BUILD_TOOL=$(sdkmanager --list | grep "build-tools;$ANDROID_API" | tail -1 | awk '{ print $1 }')
 sdkmanager emulator tools platform-tools "platforms;android-$ANDROID_API" $BUILD_TOOL "system-images;android-$ANDROID_API;default;$ABI" &>> $SETUP_LOG
+sdkmanager ndk-bundle &>> $SETUP_LOG
 
 log "Create an emulator"
 echo no | avdmanager create avd -f -n $AVD_NAME -k "system-images;android-$ANDROID_API;default;$ABI" -c 100M &>> $SETUP_LOG

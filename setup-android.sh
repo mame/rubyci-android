@@ -98,8 +98,9 @@ if [ -e termux-app/app/build/outputs/apk/debug/app-debug.apk ]; then
 else
   log "Checkout and build Termux"
   git clone https://github.com/termux/termux-app.git
-  log "Make sure Android NDK available"
-  sdkmanager "ndk-bundle;$(grep ndkVersion termux-app/app/build.gradle | sed "s/ *ndkVersion *'\([0-9.]*\)'/\1/")" &>> $SETUP_LOG
+  NDK_VERSION=$(grep ndkVersion termux-app/app/build.gradle | sed "s/ *ndkVersion *'\([0-9.]*\)'/\1/")
+  log "Make sure Android NDK available: '$NDK_VERSION'"
+  sdkmanager "ndk-bundle;$NDK_VERSION" &>> $SETUP_LOG
   cd termux-app
   ./gradlew assembleDebug -Pandroid.useAndroidX=true
   cd ..

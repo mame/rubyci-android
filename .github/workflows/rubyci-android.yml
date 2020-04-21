@@ -1,5 +1,8 @@
 name: rubyci-android
 on:
+  push:
+    branches:
+      - master
   schedule:
     - cron: '30 * * * *'
 jobs:

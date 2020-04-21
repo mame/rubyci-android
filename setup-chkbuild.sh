@@ -45,8 +45,8 @@ mkdir -p $PUBLIC_DIR
 
 for file in current.txt last.html.gz recent.ltsv summary.html summary.txt last.html last.txt recent.html rss summary.ltsv; do
   log "download $PUBLIC_DIR/$file"
-  echo "curl -o $PUBLIC_DIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file"
-  curl -o $PUBLIC_DIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file || true
+  echo "curl -o $PUBLIC_DIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file" &>> $LOG
+  curl -o $PUBLIC_DIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file &>> $LOG
 done
 
 echo '#!/usr/bin/env bash' > ~/run-chkbuild

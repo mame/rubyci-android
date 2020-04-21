@@ -164,7 +164,8 @@ ssh -i $ID_RSA_FILE -p $PORT -t localhost "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
 
 log "Result"
 
-ssh -i $ID_RSA_FILE -p $PORT -t localhost "zcat cb/tmp/public_html/ruby-master/log/*.log.txt.gz"
+ssh -i $ID_RSA_FILE -p $PORT -t localhost "cat cb/tmp/build/ruby-master/*/log"
+#ssh -i $ID_RSA_FILE -p $PORT -t localhost "zcat cb/tmp/public_html/ruby-master/log/*.log.txt.gz"
 
 log "Stop the emulator"
 kill $(cat $PID) || true

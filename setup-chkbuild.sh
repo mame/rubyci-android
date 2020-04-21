@@ -23,7 +23,7 @@ log "pkg upgrade"
 pkg upgrade -y --force-yes &>> $LOG
 
 log "pkg install"
-pkg install openssh make clang autoconf bison ruby git gdbm gdb libdb proot curl -y &>> $LOG
+pkg install openssh make clang autoconf bison ruby git gdbm gdb libdb proot wget -y &>> $LOG
 
 log "sshd"
 sshd &>> $LOG
@@ -45,8 +45,8 @@ mkdir -p $PUBLIC_DIR
 
 for file in current.txt last.html.gz recent.ltsv summary.html summary.txt last.html last.txt recent.html rss summary.ltsv; do
   log "download $PUBLIC_DIR/$file"
-  echo "curl -o $PUBLIC_DIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file" &>> $LOG
-  curl -o $PUBLIC_DIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file &>> $LOG
+  echo "wget -O $PUBLIC_DIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file" &>> $LOG
+  wget -O $PUBLIC_DIR/$file https://rubyci.s3.amazonaws.com/$(getprop ro.rubyci_nickname)/ruby-master/$file &>> $LOG
 done
 
 echo '#!/usr/bin/env bash' > ~/run-chkbuild

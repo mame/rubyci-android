@@ -10,6 +10,7 @@ set -e
 # adb -s SERIAL_FILE shell screencap -p > screen.png
 
 export PATH=$ANDROID_HOME/tools/bin:$PATH
+export PATH=$ANDROID_HOME/cmdline-tools/tools/bin:$PATH
 export PATH=$ANDROID_HOME/emulator:$PATH
 export PATH=$ANDROID_HOME/platform-tools:$PATH
 
@@ -103,6 +104,7 @@ else
   #log "Make sure Android NDK available: '$NDK_VERSION'"
   #sdkmanager --install "ndk;$NDK_VERSION" &>> $SETUP_LOG
   cd termux-app
+  patch -p1 < ../termux-app-invoke-script.patch
   ./gradlew assembleDebug -Pandroid.useAndroidX=true
   cd ..
 fi
@@ -118,21 +120,20 @@ until adb -s $(cat $SERIAL_FILE) shell dumpsys netstats | grep -q "iface=wlan0";
 done
 sleep 3
 
+log "Push the startup script"
+adb -s $(cat $SERIAL_FILE) push setup-chkbuild.sh /sdcard/setup-chkbuild.sh &>> $SETUP_LOG
+
 log "Invoke Termux"
 adb -s $(cat $SERIAL_FILE) shell am start -n com.termux/.app.TermuxActivity &>> $SETUP_LOG
 
-log "Wait for input"
+log "Wait for startup"
 sleep 3
 until [ $(adb -s $(cat $SERIAL_FILE) shell dumpsys input | grep -w com.termux/com.termux.app.TermuxActivity $i | grep -w hasFocus | wc -l) -le 1 ]; do
   sleep 1
 done
 sleep 3
 
-log "Push the startup script"
-adb -s $(cat $SERIAL_FILE) push setup-chkbuild.sh /sdcard/setup-chkbuild.sh &>> $SETUP_LOG
 adb -s $(cat $SERIAL_FILE) forward tcp:$PORT tcp:8022 &>> $SETUP_LOG
-adb -s $(cat $SERIAL_FILE) shell input text "bash%s/sdcard/setup-chkbuild.sh" &>> $SETUP_LOG
-adb -s $(cat $SERIAL_FILE) shell input keyevent KEYCODE_ENTER &>> $SETUP_LOG
 
 sleep 1
 

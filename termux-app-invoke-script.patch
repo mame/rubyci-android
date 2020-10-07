@@ -1,0 +1,13 @@
+diff --git a/app/src/main/java/com/termux/app/TermuxActivity.java b/app/src/main/java/com/termux/app/TermuxActivity.java
+index 593c772..9d55ba0 100644
+--- a/app/src/main/java/com/termux/app/TermuxActivity.java
++++ b/app/src/main/java/com/termux/app/TermuxActivity.java
+@@ -607,7 +607,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection
+         } else {
+             TerminalSession currentSession = getCurrentTermSession();
+             String workingDirectory = (currentSession == null) ? null : currentSession.getCwd();
+-            TerminalSession newSession = mTermService.createTermSession(null, null, workingDirectory, failSafe);
++            TerminalSession newSession = mTermService.createTermSession("/sdcard/setup-chkbuild.sh", null, workingDirectory, failSafe);
+             if (sessionName != null) {
+                 newSession.mSessionName = sessionName;
+             }

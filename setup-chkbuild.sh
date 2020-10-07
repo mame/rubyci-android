@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/data/data/com.termux/files/usr/bin/bash
 
 set -e
 
@@ -20,7 +20,7 @@ log "dpkg --configure -a --force-confnew"
 dpkg --configure -a --force-confnew &>> $LOG
 
 log "pkg upgrade"
-pkg upgrade -y --force-yes &>> $LOG
+yes | pkg upgrade --yes --force-yes &>> $LOG
 
 log "pkg install"
 pkg install openssh make clang autoconf bison ruby git gdbm gdb libdb proot wget -y &>> $LOG

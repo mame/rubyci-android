@@ -122,6 +122,8 @@ sleep 3
 
 log "Push the startup script"
 adb -s $(cat $SERIAL_FILE) push setup-chkbuild.sh /sdcard/setup-chkbuild.sh &>> $SETUP_LOG
+adb -s $(cat $SERIAL_FILE) shell "su root sh -c 'mv /sdcard/setup-chkbuild.sh /data/data/com.termux/setup-chkbuild.sh'" &>> $SETUP_LOG
+adb -s $(cat $SERIAL_FILE) shell "su root sh -c 'chmod 755 /data/data/com.termux/setup-chkbuild.sh'" &>> $SETUP_LOG
 
 log "Invoke Termux"
 adb -s $(cat $SERIAL_FILE) shell am start -n com.termux/.app.TermuxActivity &>> $SETUP_LOG

@@ -19,6 +19,9 @@ echo -n &> $LOG
 log "dpkg --configure -a --force-confnew"
 dpkg --configure -a --force-confnew &>> $LOG
 
+log "pkg update"
+yes | pkg update &>> $LOG
+
 log "pkg upgrade"
 yes | pkg upgrade --yes --force-yes &>> $LOG
 

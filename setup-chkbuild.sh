@@ -37,6 +37,14 @@ mv id_rsa.termux.pub ~/.ssh/authorized_keys &>> $LOG
 chmod 600 ~/.ssh/authorized_keys &>> $LOG
 cp id_rsa.termux /sdcard/id_rsa.termux &>> $LOG
 
+log "setup autoconf 2.69"
+wget -q https://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz &>> $LOG
+tar xzf autoconf-2.69.tar.gz &>> $LOG
+cd autoconf-2.69 &>> $LOG
+./configure --prefix=$HOME/local &>> $LOG
+make install &>> $LOG
+cd .. &>> $LOG
+
 log "gem install aws-sdk"
 gem install aws-sdk-s3 -N &>> $LOG
 
@@ -58,6 +66,7 @@ echo "cd cb" >> ~/run-chkbuild
 echo "git pull" >> ~/run-chkbuild
 echo "ulimit -n 1024" >> ~/run-chkbuild
 echo "export RUBYCI_NICKNAME=$(getprop ro.rubyci_nickname)" >> ~/run-chkbuild
+echo "export PATH=\$HOME/local/bin:\$PATH" >> ~/run-chkbuild
 echo "./start-rubyci" >> ~/run-chkbuild
 chmod 755 ~/run-chkbuild
 

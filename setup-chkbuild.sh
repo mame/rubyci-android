@@ -26,7 +26,7 @@ log "pkg upgrade"
 yes | pkg upgrade --yes --force-yes &>> $LOG
 
 log "pkg install"
-pkg install openssh make clang autoconf bison ruby git gdbm gdb libdb proot wget -y &>> $LOG
+pkg install openssh make clang autoconf automake bison ruby git gdbm gdb libdb proot wget -y &>> $LOG
 
 log "sshd"
 sshd &>> $LOG

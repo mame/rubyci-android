@@ -95,7 +95,7 @@ until [ `adb -s $(cat $SERIAL_FILE) shell getprop sys.boot_completed`x = 1x ]; d
   sleep 1
 done
 
-if [ -e termux-app/app/build/outputs/apk/debug/app-debug.apk ]; then
+if [ -e termux-app/app/build/outputs/apk/debug/app-x86_64-debug.apk ]; then
   log "Termux is already built"
 else
   log "Checkout and build Termux"
@@ -110,7 +110,7 @@ else
 fi
 
 log "Install and setup Termux"
-adb -s $(cat $SERIAL_FILE) install termux-app/app/build/outputs/apk/debug/app-debug.apk &>> $SETUP_LOG
+adb -s $(cat $SERIAL_FILE) install termux-app/app/build/outputs/apk/debug/app-x86_64-debug.apk &>> $SETUP_LOG
 adb -s $(cat $SERIAL_FILE) shell pm grant com.termux android.permission.READ_EXTERNAL_STORAGE &>> $SETUP_LOG
 adb -s $(cat $SERIAL_FILE) shell pm grant com.termux android.permission.WRITE_EXTERNAL_STORAGE &>> $SETUP_LOG
 

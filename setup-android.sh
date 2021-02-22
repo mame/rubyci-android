@@ -95,22 +95,30 @@ until [ `adb -s $(cat $SERIAL_FILE) shell getprop sys.boot_completed`x = 1x ]; d
   sleep 1
 done
 
-if [ -e termux-app/app/build/outputs/apk/debug/app-x86_64-debug.apk ]; then
-  log "Termux is already built"
-else
-  log "Checkout and build Termux"
-  git clone https://github.com/termux/termux-app.git
-  NDK_VERSION=$(grep ndkVersion termux-app/gradle.properties | sed "s/ndkVersion=\([0-9.]*\)/\1/")
-  log "Make sure Android NDK available: '$NDK_VERSION'"
-  sdkmanager --install "ndk;$NDK_VERSION" &>> $SETUP_LOG
-  cd termux-app
-  patch -p1 < ../termux-app-invoke-script.patch
-  ./gradlew assembleDebug -Pandroid.useAndroidX=true
-  cd ..
-fi
+while true; do
+  if [ -e termux-app/app/build/outputs/apk/debug/app-debug.apk ]; then
+    APK=termux-app/app/build/outputs/apk/debug/app-debug.apk
+    log "Termux is already built"
+    break
+  elif [ -e termux-app/app/build/outputs/apk/debug/app-x86_64-debug.apk ]; then
+    APK=termux-app/app/build/outputs/apk/debug/app-x86_64-debug.apk
+    log "Termux is already built"
+    break
+  else
+    log "Checkout and build Termux"
+    git clone https://github.com/termux/termux-app.git
+    NDK_VERSION=$(grep ndkVersion termux-app/gradle.properties | sed "s/ndkVersion=\([0-9.]*\)/\1/")
+    log "Make sure Android NDK available: '$NDK_VERSION'"
+    sdkmanager --install "ndk;$NDK_VERSION" &>> $SETUP_LOG
+    cd termux-app
+    patch -p1 < ../termux-app-invoke-script.patch
+    ./gradlew assembleDebug -Pandroid.useAndroidX=true
+    cd ..
+  fi
+done
 
 log "Install and setup Termux"
-adb -s $(cat $SERIAL_FILE) install termux-app/app/build/outputs/apk/debug/app-x86_64-debug.apk &>> $SETUP_LOG
+adb -s $(cat $SERIAL_FILE) install $APK &>> $SETUP_LOG
 adb -s $(cat $SERIAL_FILE) shell pm grant com.termux android.permission.READ_EXTERNAL_STORAGE &>> $SETUP_LOG
 adb -s $(cat $SERIAL_FILE) shell pm grant com.termux android.permission.WRITE_EXTERNAL_STORAGE &>> $SETUP_LOG
 

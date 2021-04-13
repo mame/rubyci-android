@@ -111,7 +111,6 @@ while true; do
     log "Make sure Android NDK available: '$NDK_VERSION'"
     sdkmanager --install "ndk;$NDK_VERSION" &>> $SETUP_LOG
     cd termux-app
-    patch -p1 < ../termux-app-invoke-script.patch
     ./gradlew assembleDebug -Pandroid.useAndroidX=true
     cd ..
   fi
@@ -128,13 +127,22 @@ until adb -s $(cat $SERIAL_FILE) shell dumpsys netstats | grep -q "iface=wlan0";
 done
 sleep 3
 
+log "Get root access"
+adb -s $(cat $SERIAL_FILE) root &>> $SETUP_LOG
+sleep 3
+
 log "Push the startup script"
-adb -s $(cat $SERIAL_FILE) push setup-chkbuild.sh /sdcard/setup-chkbuild.sh &>> $SETUP_LOG
-adb -s $(cat $SERIAL_FILE) shell "su root sh -c 'mv /sdcard/setup-chkbuild.sh /data/data/com.termux/setup-chkbuild.sh'" &>> $SETUP_LOG
-adb -s $(cat $SERIAL_FILE) shell "su root sh -c 'chmod 755 /data/data/com.termux/setup-chkbuild.sh'" &>> $SETUP_LOG
+
+adb -s $(cat $SERIAL_FILE) push setup_chkbuild.sh /sdcard/setup_chkbuild.sh &>> $SETUP_LOG
+adb -s $(cat $SERIAL_FILE) shell "mv /sdcard/setup_chkbuild.sh /data/data/com.termux/setup_chkbuild.sh" &>> $SETUP_LOG
+adb -s $(cat $SERIAL_FILE) shell "chmod 755 /data/data/com.termux/setup_chkbuild.sh" &>> $SETUP_LOG
+
+adb -s $(cat $SERIAL_FILE) shell "mkdir -p /data/data/com.termux/files/home/.termux/" &>> $SETUP_LOG
+adb -s $(cat $SERIAL_FILE) shell "echo 'allow-external-apps=true' > /data/data/com.termux/files/home/.termux/termux.properties" &>> $SETUP_LOG
+adb -s $(cat $SERIAL_FILE) shell "chmod 644 /data/data/com.termux/files/home/.termux/termux.properties" &>> $SETUP_LOG
 
 log "Invoke Termux"
-adb -s $(cat $SERIAL_FILE) shell am start -n com.termux/.app.TermuxActivity &>> $SETUP_LOG
+adb -s $(cat $SERIAL_FILE) shell am start -n com.termux/.app.TermuxActivity
 
 log "Wait for startup"
 sleep 3
@@ -143,13 +151,25 @@ until [ $(adb -s $(cat $SERIAL_FILE) shell dumpsys input | grep -w com.termux/co
 done
 sleep 3
 
+log "Invoke setup_chkbuild.sh"
+adb -s $(cat $SERIAL_FILE) shell am startservice \
+  --user 0 \
+  -n com.termux/com.termux.app.RunCommandService \
+  -a com.termux.RUN_COMMAND \
+  --es com.termux.RUN_COMMAND_PATH '/data/data/com.termux/setup_chkbuild.sh' \
+  --ez com.termux.RUN_COMMAND_BACKGROUND 'false' \
+  --es com.termux.RUN_COMMAND_SESSION_ACTION '0' &>> $SETUP_LOG
+
+adb -s $(cat $SERIAL_FILE) unroot &>> $SETUP_LOG
+sleep 3
+
 adb -s $(cat $SERIAL_FILE) forward tcp:$PORT tcp:8022 &>> $SETUP_LOG
 
 sleep 1
 
-log "You can watch the log by: adb -s \$(cat $SERIAL_FILE) shell tail -f /sdcard/setup-chkbuild.log"
+log "You can watch the log by: adb -s \$(cat $SERIAL_FILE) shell tail -f /sdcard/setup_chkbuild.log"
 
-adb -s $(cat $SERIAL_FILE) shell tail -f /sdcard/setup-chkbuild.log &
+adb -s $(cat $SERIAL_FILE) shell tail -f /sdcard/setup_chkbuild.log &
 TAIL_PID=$!
 
 until adb -s $(cat $SERIAL_FILE) pull /sdcard/id_rsa.termux $ID_RSA_FILE &>> $SETUP_LOG; do
@@ -159,7 +179,7 @@ chmod 600 $ID_RSA_FILE
 
 log "You can login the emulator by: ssh -i $ID_RSA_FILE -p $PORT localhost"
 
-until adb -s $(cat $SERIAL_FILE) pull /sdcard/setup-chkbuild-done /dev/null &>> $SETUP_LOG; do
+until adb -s $(cat $SERIAL_FILE) pull /sdcard/setup_chkbuild-done /dev/null &>> $SETUP_LOG; do
   sleep 1
 done
 
@@ -167,7 +187,7 @@ kill -int $TAIL_PID
 
 log "Setup done"
 
-ssh -oStrictHostKeyChecking=no -i $ID_RSA_FILE -p $PORT localhost cat /sdcard/setup-chkbuild.log
+ssh -oStrictHostKeyChecking=no -i $ID_RSA_FILE -p $PORT localhost cat /sdcard/setup_chkbuild.log
 
 log "Run chkbuild"
 

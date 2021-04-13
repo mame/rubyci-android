@@ -2,7 +2,7 @@
 
 set -e
 
-LOG=/sdcard/setup-chkbuild.log
+LOG=/sdcard/setup_chkbuild.log
 
 function log() {
   echo >> $LOG
@@ -63,4 +63,4 @@ chmod 755 ~/run-chkbuild
 
 log "done"
 
-touch /sdcard/setup-chkbuild-done &>> $LOG
+touch /sdcard/setup_chkbuild-done &>> $LOG

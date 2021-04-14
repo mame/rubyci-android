@@ -34,6 +34,17 @@ PID=$NICKNAME/emulator.pid
 SERIAL_FILE=$NICKNAME/emulator.serial
 ID_RSA_FILE=$NICKNAME/id_rsa
 
+show_log() {
+  echo
+  echo
+  echo
+  echo "failed."
+  echo
+  echo "==="
+  cat $SETUP_LOG
+  exit 1
+}
+
 function log() {
   echo >> $SETUP_LOG
   echo >> $SETUP_LOG
@@ -42,6 +53,9 @@ function log() {
   echo >> $SETUP_LOG
   echo $1
 }
+
+set -e
+trap "show_log" ERR
 
 echo -n > $SETUP_LOG
 

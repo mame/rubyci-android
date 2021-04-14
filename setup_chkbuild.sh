@@ -1,8 +1,17 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
-set -e
-
 LOG=/sdcard/setup_chkbuild.log
+
+show_log() {
+  echo
+  echo
+  echo
+  echo "failed."
+  echo
+  echo "==="
+  cat $LOG
+  exit 1
+}
 
 function log() {
   echo >> $LOG
@@ -15,6 +24,9 @@ function log() {
 
 echo "You can check the log in $LOG"
 echo -n &> $LOG
+
+set -e
+trap "show_log" ERR
 
 log "dpkg --configure -a --force-confnew"
 dpkg --configure -a --force-confnew &>> $LOG

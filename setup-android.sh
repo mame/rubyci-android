@@ -143,7 +143,7 @@ sleep 3
 
 log "Get root access"
 adb -s $(cat $SERIAL_FILE) root &>> $SETUP_LOG
-sleep 3
+sleep 10
 
 log "Push the startup script"
 
@@ -174,9 +174,6 @@ adb -s $(cat $SERIAL_FILE) shell am startservice \
   --es com.termux.RUN_COMMAND_PATH '/data/data/com.termux/setup_chkbuild.sh' \
   --ez com.termux.RUN_COMMAND_BACKGROUND 'false' \
   --es com.termux.RUN_COMMAND_SESSION_ACTION '0' &>> $SETUP_LOG
-
-adb -s $(cat $SERIAL_FILE) unroot &>> $SETUP_LOG
-sleep 3
 
 adb -s $(cat $SERIAL_FILE) forward tcp:$PORT tcp:8022 &>> $SETUP_LOG
 

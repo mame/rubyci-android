@@ -159,7 +159,7 @@ sleep 3
 until [ $(adb -s $(cat $SERIAL_FILE) shell dumpsys input | grep -w com.termux/com.termux.app.TermuxActivity $i | grep -w hasFocus | wc -l) -le 1 ]; do
   sleep 1
 done
-sleep 3
+sleep 10
 
 log "Setup termux.properties"
 adb -s $(cat $SERIAL_FILE) shell "mkdir -p /data/data/com.termux/files/home/.termux/" &>> $SETUP_LOG

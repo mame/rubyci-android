@@ -151,29 +151,31 @@ adb -s $(cat $SERIAL_FILE) push setup_chkbuild.sh /sdcard/setup_chkbuild.sh &>> 
 adb -s $(cat $SERIAL_FILE) shell "mv /sdcard/setup_chkbuild.sh /data/data/com.termux/setup_chkbuild.sh" &>> $SETUP_LOG
 adb -s $(cat $SERIAL_FILE) shell "chmod 755 /data/data/com.termux/setup_chkbuild.sh" &>> $SETUP_LOG
 
-log "Invoke Termux"
-adb -s $(cat $SERIAL_FILE) shell am start -n com.termux/.app.TermuxActivity
+for retry in 1 2 3; do
+  log "Invoke Termux"
+  adb -s $(cat $SERIAL_FILE) shell am start -n com.termux/.app.TermuxActivity
 
-log "Wait for startup"
-sleep 3
-until [ $(adb -s $(cat $SERIAL_FILE) shell dumpsys input | grep -w com.termux/com.termux.app.TermuxActivity $i | grep -w hasFocus | wc -l) -le 1 ]; do
-  sleep 1
+  log "Wait for startup"
+  sleep 3
+  until [ $(adb -s $(cat $SERIAL_FILE) shell dumpsys input | grep -w com.termux/com.termux.app.TermuxActivity $i | grep -w hasFocus | wc -l) -le 1 ]; do
+    sleep 1
+  done
+  sleep 10
+
+  log "Setup termux.properties"
+  adb -s $(cat $SERIAL_FILE) shell "mkdir -p /data/data/com.termux/files/home/.termux/" &>> $SETUP_LOG
+  adb -s $(cat $SERIAL_FILE) shell "echo 'allow-external-apps=true' > /data/data/com.termux/files/home/.termux/termux.properties" &>> $SETUP_LOG
+  adb -s $(cat $SERIAL_FILE) shell "chmod 644 /data/data/com.termux/files/home/.termux/termux.properties" &>> $SETUP_LOG
+
+  log "Invoke setup_chkbuild.sh"
+  adb -s $(cat $SERIAL_FILE) shell am startservice \
+    --user 0 \
+    -n com.termux/com.termux.app.RunCommandService \
+    -a com.termux.RUN_COMMAND \
+    --es com.termux.RUN_COMMAND_PATH '/data/data/com.termux/setup_chkbuild.sh' \
+    --ez com.termux.RUN_COMMAND_BACKGROUND 'false' \
+    --es com.termux.RUN_COMMAND_SESSION_ACTION '0' &>> $SETUP_LOG && break
 done
-sleep 10
-
-log "Setup termux.properties"
-adb -s $(cat $SERIAL_FILE) shell "mkdir -p /data/data/com.termux/files/home/.termux/" &>> $SETUP_LOG
-adb -s $(cat $SERIAL_FILE) shell "echo 'allow-external-apps=true' > /data/data/com.termux/files/home/.termux/termux.properties" &>> $SETUP_LOG
-adb -s $(cat $SERIAL_FILE) shell "chmod 644 /data/data/com.termux/files/home/.termux/termux.properties" &>> $SETUP_LOG
-
-log "Invoke setup_chkbuild.sh"
-adb -s $(cat $SERIAL_FILE) shell am startservice \
-  --user 0 \
-  -n com.termux/com.termux.app.RunCommandService \
-  -a com.termux.RUN_COMMAND \
-  --es com.termux.RUN_COMMAND_PATH '/data/data/com.termux/setup_chkbuild.sh' \
-  --ez com.termux.RUN_COMMAND_BACKGROUND 'false' \
-  --es com.termux.RUN_COMMAND_SESSION_ACTION '0' &>> $SETUP_LOG
 
 adb -s $(cat $SERIAL_FILE) forward tcp:$PORT tcp:8022 &>> $SETUP_LOG
 

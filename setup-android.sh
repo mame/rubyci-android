@@ -4,7 +4,7 @@ set -e
 
 # apt-get install qemu-kvm openjdk-8-jdk gradle
 # adduser $USER kvm
-# yes | sdkmanager --licenses
+yes | sdkmanager --licenses
 # sdkmanager emulator tools platform-tools
 
 # adb -s SERIAL_FILE shell screencap -p > screen.png
